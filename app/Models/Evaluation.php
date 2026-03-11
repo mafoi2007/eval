@@ -11,6 +11,11 @@ class Evaluation extends Model
 
     protected $fillable = ['titre', 'description', 'classe_id'];
     
+    public function questions()
+    {
+        return $this->hasMany(Question::class)->orderBy('position');
+    }
+
     public function classe()
     {
         return $this->belongsTo(Classe::class);
