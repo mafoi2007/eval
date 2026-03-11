@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Eleve extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['user_id', 'classe_id'];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -18,8 +21,8 @@ class Eleve extends Model
         return $this->belongsTo(Classe::class);
     }
 
-    public function note()
+    public function notes()
     {
-        return $this->hasOne(Note::class);
+        return $this->hasMany(Note::class);
     }
 }

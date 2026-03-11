@@ -2,63 +2,54 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Classe;
 use Illuminate\Http\Request;
 
 class ClasseController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $classes = Classe::withCount(['eleves', 'evaluations'])->latest()->paginate(10);
+
+        return view('classes.index', compact('classes'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('classes.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'nom' => ['required', 'string', 'max:255', 'unique:classes,nom'],
+            ]);
+        
+        Classe::create($validated);
+
+        return redirect()->route('classes.index')->with('success', 'Classe créée avec succès.');
+    }
+        
+    public function edit(Classe $class)
+    {
+        return view('classes.edit', ['classe' => $class]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(Request $request, Classe $class)
     {
-        //
+        $validated = $request->validate([
+            'nom' => ['required', 'string', 'max:255', 'unique:classes,nom,' . $class->id],
+        ]);
+
+        $class->update($validated);
+
+        return redirect()->route('classes.index')->with('success', 'Classe modifiée avec succès.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function destroy(Classe $class)
     {
-        //
-    }
+        $class->delete();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('classes.index')->with('success', 'Classe supprimée.');
     }
 }
